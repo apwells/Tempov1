@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Collections;
 
 namespace Tempov1
 {
@@ -20,10 +21,18 @@ namespace Tempov1
         SpriteBatch spriteBatch;
         Character player;
 
+        ArrayList characterList = new ArrayList();
+
         public Game1()
         {   
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            
+            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            
         }
 
         /// <summary>
@@ -36,7 +45,16 @@ namespace Tempov1
         {
             // TODO: Add your initialization logic here
 
+
+
             player = new Character();
+
+            characterList.Add(player);
+
+            for (int x = 0; x < 3; x++)
+            {
+                characterList.Add(new Character());
+            }
 
             base.Initialize();
         }
@@ -50,13 +68,21 @@ namespace Tempov1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + 150, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            player.Initialize(Content.Load<Texture2D>("Character/head"),
+            //Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+
+            Random rnd = new Random();
+
+            foreach (Character character in characterList)
+            {
+                System.Threading.Thread.Sleep(50);
+            Vector2 playerPosition = new Vector2(rnd.Next(0,700), 300);
+            character.Initialize(Content.Load<Texture2D>("Character/head"),
                 Content.Load<Texture2D>("Character/leftarm"),
                 Content.Load<Texture2D>("Character/rightarm"),
                 Content.Load<Texture2D>("Character/leg"),
                 playerPosition);
 
+            }
             // TODO: use this.Content to load your game content here
         }
 
@@ -95,7 +121,13 @@ namespace Tempov1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            player.Draw(spriteBatch);
+            //player.Draw(spriteBatch);
+
+            foreach (Character character in characterList)
+            {
+                character.Draw(spriteBatch);
+            }
+
             spriteBatch.End();
 
             base.Draw(gameTime);

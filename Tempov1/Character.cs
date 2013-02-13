@@ -30,6 +30,7 @@ namespace Tempov1
         // private int heads;
         private int arms;
         private Color colour;
+        private Color limbColour;
 
         private ArrayList legArray = new ArrayList();
 
@@ -62,9 +63,9 @@ namespace Tempov1
 
         public void Draw(SpriteBatch spriteBatch)
         {
-
-            spriteBatch.Draw(playerTexture, position, null, colour, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             DrawLimbs(spriteBatch);
+            spriteBatch.Draw(playerTexture, position, null, colour, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            
         }
 
         private void Generate()
@@ -73,35 +74,39 @@ namespace Tempov1
 
             Random rnd = new Random();
             scale = (float)Math.Max((rnd.NextDouble()), minSize);
-            legs = rnd.Next(0, 8);
-            arms = rnd.Next(0, 4);
-            colour = new Color(rnd.Next(1, 90), 
-                               rnd.Next(1, 90), 
-                               rnd.Next(1, 90));
+            //scale = 1; // DELETE ME TO DO
+            legs = rnd.Next(0, 5);
 
-            for (int x = 0; x < legs; x++)
+            arms = rnd.Next(0, 4);
+            colour = new Color(rnd.Next(60, 255), 
+                               rnd.Next(60, 255), 
+                               rnd.Next(60, 255));
+
+            limbColour = new Color(rnd.Next(180, 255),
+                                    rnd.Next(180, 255),
+                                    rnd.Next(180, 255));
+
+
+
+            for (int x = 1; x <= legs; x++)
             {
-                
+                float legOffset = scale* ((float)width * ((float)x / ((float)legs + 1f)));
+
+                Console.WriteLine("leg offset was " + legOffset + ". Width is " + width);
+                legArray.Add(new Limb((int)legOffset, (int)(150*scale), scale, legTexture));
             }
         }
 
         private void DrawLimbs(SpriteBatch spriteBatch)
         {
-            if (legs > 0)
+            foreach (Limb limb in legArray)
             {
-                if (legs % 2 == 0)  // Even number of legs
-                {
-
-                }
-                
-                spriteBatch.Draw(legTexture, position, Color.White);
+                Vector2 limbPosition = limb.position;
+                Vector2 newPosition = Vector2.Add(limb.position, position);
+                spriteBatch.Draw(limb.texture, newPosition,null, limbColour, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             }
         }
 
-        private float Random()
-        {
-            return 0;
-        }
 
     }
 }
