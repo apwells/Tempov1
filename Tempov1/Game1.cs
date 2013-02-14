@@ -63,7 +63,7 @@ namespace Tempov1
 
             characterList.Add(player);
 
-            for (int x = 0; x < 3; x++)
+            for (int x = 0; x < 0; x++)
             {
                 characterList.Add(new Character());
             }
@@ -102,7 +102,7 @@ namespace Tempov1
             Random rnd = new Random();
             
 
-            floor = new Floor(Content.Load<Texture2D>("floor"), 1280, 147, 0, (GraphicsDevice.Viewport.TitleSafeArea.Height - 300), world);
+            floor = new Floor(Content.Load<Texture2D>("floor"), 1280, 147, 0, (GraphicsDevice.Viewport.TitleSafeArea.Height - 148), world);
 
 
             foreach (Character character in characterList)

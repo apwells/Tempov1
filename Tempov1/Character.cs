@@ -37,11 +37,12 @@ namespace Tempov1
         private Color colour;
         private Color limbColour;
 
-        Vector2 circleOrigin;
+        public Vector2 circleOrigin;
 
         // PHYSICS
         public Body body;
         public Fixture fixture;
+        public World world;
 
         private ArrayList legArray = new ArrayList();
 
@@ -64,6 +65,7 @@ namespace Tempov1
             this.rightArmTexture = rightArmTexture;
             this.legTexture = legTexture;
             this.position = position;
+            this.world = world;
 
             Generate();
             // Physics setup
@@ -80,7 +82,7 @@ namespace Tempov1
             //CircleShape shape = new CircleShape(0.5f);
 
             //Fixture fixture = body.CreateFixture(shape);
-
+            BuildLegs();
             
             
         }
@@ -106,7 +108,7 @@ namespace Tempov1
 
             position = body.Position;
             DrawLimbs(spriteBatch);
-            spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 0f);
+            //spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 0f);
 
             // DEBUGGING CODE. TO DELETE
             if (isPlayer)
@@ -134,13 +136,7 @@ namespace Tempov1
 
 
 
-            for (int x = 1; x <= legs; x++)
-            {
-                float legOffset = scale* ((float)width * ((float)x / ((float)legs + 1f)));
 
-                Console.WriteLine("leg offset was " + legOffset + ". Width is " + width);
-                legArray.Add(new Limb((int)legOffset, (int)(150*scale), scale, legTexture));
-            }
 
 
             // circleOrigin = new Vector2((playerTexture.Width /2)*scale, (playerTexture.Height /2)*scale);
@@ -152,13 +148,31 @@ namespace Tempov1
             
         }
 
+        private void BuildLegs()
+        {
+            for (int x = 1; x <= legs; x++)
+            {
+                float legOffset = scale * ((float)width * ((float)x / ((float)legs + 1f)));
+
+                Console.WriteLine("leg offset was " + legOffset + ". Width is " + width);
+                Limb limb = new Limb((int)legOffset, (int)(150 * scale), scale, legTexture, body, world, this);
+                legArray.Add(limb);
+
+
+
+                
+                //body.JointList.Next.Joint.
+                
+            }
+        }
+
         private void DrawLimbs(SpriteBatch spriteBatch)
         {
             foreach (Limb limb in legArray)
             {
                 Vector2 limbPosition = limb.position;
-                Vector2 newPosition = Vector2.Add(limb.position, position);
-                spriteBatch.Draw(limb.texture, ConvertUnits.ToDisplayUnits(newPosition),null, limbColour, body.Rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                Vector2 newPosition = Vector2.Add(limb.position, ConvertUnits.ToDisplayUnits(body.Position));
+                spriteBatch.Draw(limb.texture, newPosition,null, limbColour, body.Rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
             }
         }
 
