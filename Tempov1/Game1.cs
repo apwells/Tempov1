@@ -16,6 +16,10 @@ using FarseerPhysics.Collision;
 using FarseerPhysics.Common;
 using FarseerPhysics.Controllers;
 using FarseerPhysics.Factories;
+using Ruminate.GUI.Content;
+using Ruminate.GUI.Framework;
+using Ruminate.Utils;
+using Ruminate.DataStructures;
 
 namespace Tempov1
 {
@@ -27,7 +31,10 @@ namespace Tempov1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Character player;
-        World world;    // Physics engine. For later...
+        World world;    // Physics
+        Gui _gui;
+        MouseObj mouseObj;
+
 
         private FarseerPhysics.DebugViews.DebugViewXNA _debugView;
 
@@ -59,7 +66,7 @@ namespace Tempov1
 
             player = new Character();
             player.isPlayer = true;
-
+            mouseObj = new MouseObj();  // For tracking the mouse
 
             characterList.Add(player);
 
@@ -143,6 +150,8 @@ namespace Tempov1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            HandleInput();
+
             // TODO: Add your update logic here
             world.Step((float)gameTime.ElapsedGameTime.TotalMilliseconds * 0.001f);
 
@@ -161,12 +170,12 @@ namespace Tempov1
              * 
             */
             
-         //            var projection = Matrix.CreateOrthographicOffCenter(
-         //    0f,
-         //    ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Width),
-         //    ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Height), 0f, 0f,
-         //    1f);
-         //_debugView.RenderDebugData(ref projection);
+                     var projection = Matrix.CreateOrthographicOffCenter(
+             0f,
+             ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Width),
+             ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Height), 0f, 0f,
+             1f);
+         _debugView.RenderDebugData(ref projection);
 
 
 
@@ -186,10 +195,38 @@ namespace Tempov1
         }
 
 
-        private void DrawScene(SpriteBatch spriteBatch)
+        public void HandleInput()
         {
+            if (mouseObj.HasClicked())
+            {
+                // Create a new dude
+                Console.WriteLine("Mouse pressed");
+                NewCharacter();
+            }
+        }
+
+        public void NewCharacter()
+        {
+            Random rnd = new Random();
+            Character newChar = new Character();
+            characterList.Add(newChar);
+            Vector2 playerPosition = new Vector2(rnd.Next(0, 1000), rnd.Next(100, 100));
+            newChar.Initialize(Content.Load<Texture2D>("Character/head"),
+                Content.Load<Texture2D>("Character/leftarm"),
+                Content.Load<Texture2D>("Character/rightarm"),
+                Content.Load<Texture2D>("Character/leg"),
+                playerPosition,
+                world);
 
         }
+
+
+        //private void CreateGUI()
+        //{
+        //    Game game = this;
+        //    Skin skin = new Skin(Content.Load<Texture2D>("Character/leftarm"), "hello");
+        //    _gui = new Gui(game, skin, );
+        //}
 
     }
 }
