@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections;
 
+
 namespace Tempov1
 {
     class Character
@@ -74,7 +75,6 @@ namespace Tempov1
 
             Random rnd = new Random();
             scale = (float)Math.Max((rnd.NextDouble()), minSize);
-            //scale = 1; // DELETE ME TO DO
             legs = rnd.Next(0, 5);
 
             arms = rnd.Next(0, 4);

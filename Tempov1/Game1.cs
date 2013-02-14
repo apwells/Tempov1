@@ -10,6 +10,13 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System.Collections;
 
+using FarseerPhysics;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Collision;
+using FarseerPhysics.Common;
+using FarseerPhysics.Controllers;
+using FarseerPhysics.Factories;
+
 namespace Tempov1
 {
     /// <summary>
@@ -20,6 +27,9 @@ namespace Tempov1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Character player;
+        World world;    // Physics engine. For later...
+
+        private Floor floor;
 
         ArrayList characterList = new ArrayList();
 
@@ -45,9 +55,9 @@ namespace Tempov1
         {
             // TODO: Add your initialization logic here
 
-
-
             player = new Character();
+
+
 
             characterList.Add(player);
 
@@ -71,6 +81,9 @@ namespace Tempov1
             //Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             Random rnd = new Random();
+
+            floor = new Floor(Content.Load<Texture2D>("floor"), 1280, 147, 0, (GraphicsDevice.Viewport.TitleSafeArea.Height - 147));
+
 
             foreach (Character character in characterList)
             {
@@ -122,6 +135,7 @@ namespace Tempov1
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             //player.Draw(spriteBatch);
+            floor.Draw(spriteBatch);
 
             foreach (Character character in characterList)
             {
@@ -132,5 +146,12 @@ namespace Tempov1
 
             base.Draw(gameTime);
         }
+
+
+        private void DrawScene(SpriteBatch spriteBatch)
+        {
+
+        }
+
     }
 }
