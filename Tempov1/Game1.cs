@@ -29,6 +29,8 @@ namespace Tempov1
         Character player;
         World world;    // Physics engine. For later...
 
+        private FarseerPhysics.DebugViews.DebugViewXNA _debugView;
+
         private Floor floor;
 
         ArrayList characterList = new ArrayList();
@@ -56,7 +58,7 @@ namespace Tempov1
             // TODO: Add your initialization logic here
 
             player = new Character();
-
+            player.isPlayer = true;
 
 
             characterList.Add(player);
@@ -75,27 +77,49 @@ namespace Tempov1
         /// </summary>
         protected override void LoadContent()
         {
+
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            world = new World(new Vector2(0, 8.2f));   // World with gravity of 1
+
+            Content.Load<SpriteFont>("font");
+
+            _debugView = new FarseerPhysics.DebugViews.DebugViewXNA(world);
+
+            // default is shape, controller, joints
+            // we just want shapes to display
+            _debugView.RemoveFlags(DebugViewFlags.Controllers);
+            _debugView.RemoveFlags(DebugViewFlags.Joint);
+
+            _debugView.LoadContent(GraphicsDevice, Content);
+
+
+           
 
             //Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             Random rnd = new Random();
+            
 
-            floor = new Floor(Content.Load<Texture2D>("floor"), 1280, 147, 0, (GraphicsDevice.Viewport.TitleSafeArea.Height - 147));
+            floor = new Floor(Content.Load<Texture2D>("floor"), 1280, 147, 0, (GraphicsDevice.Viewport.TitleSafeArea.Height - 300), world);
 
 
             foreach (Character character in characterList)
             {
                 System.Threading.Thread.Sleep(50);
-            Vector2 playerPosition = new Vector2(rnd.Next(0,700), 300);
+            Vector2 playerPosition = new Vector2(rnd.Next(0,1000), rnd.Next(100,100));
             character.Initialize(Content.Load<Texture2D>("Character/head"),
                 Content.Load<Texture2D>("Character/leftarm"),
                 Content.Load<Texture2D>("Character/rightarm"),
                 Content.Load<Texture2D>("Character/leg"),
-                playerPosition);
+                playerPosition,
+                world);
 
             }
+
+
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -120,6 +144,7 @@ namespace Tempov1
                 this.Exit();
 
             // TODO: Add your update logic here
+            world.Step((float)gameTime.ElapsedGameTime.TotalMilliseconds * 0.001f);
 
             base.Update(gameTime);
         }
@@ -131,6 +156,19 @@ namespace Tempov1
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            /**** PHYSICS 
+             * 
+            */
+            
+                     var projection = Matrix.CreateOrthographicOffCenter(
+             0f,
+             ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Width),
+             ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Height), 0f, 0f,
+             1f);
+         _debugView.RenderDebugData(ref projection);
+
+
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();

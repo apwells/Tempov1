@@ -5,7 +5,11 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections;
-
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
+using FarseerPhysics.Collision;
+using FarseerPhysics.Common;
+using FarseerPhysics.Controllers; // What does this do?
 
 namespace Tempov1
 {
@@ -21,7 +25,7 @@ namespace Tempov1
         public Vector2 position;
 
         // State of the player
-        public bool active;
+        public bool isPlayer;
 
         public int health;
 
@@ -33,6 +37,12 @@ namespace Tempov1
         private Color colour;
         private Color limbColour;
 
+        Vector2 circleOrigin;
+
+        // PHYSICS
+        public Body body;
+        public Fixture fixture;
+
         private ArrayList legArray = new ArrayList();
 
         public int width
@@ -41,22 +51,49 @@ namespace Tempov1
         }
 
         // Get the height of the player ship
-        public int Height
+        public int height
         {
             get { return playerTexture.Height; }
         }
 
-        public void Initialize(Texture2D headTexture, Texture2D leftArmTexture, Texture2D rightArmTexture, Texture2D legTexture, Vector2 position)
+        public void Initialize(Texture2D headTexture, Texture2D leftArmTexture, Texture2D rightArmTexture, Texture2D legTexture, Vector2 position, World world)
         {
             
             playerTexture = headTexture;
             this.leftArmTexture = leftArmTexture;
             this.rightArmTexture = rightArmTexture;
             this.legTexture = legTexture;
-            
             this.position = position;
+
             Generate();
+            // Physics setup
+
+            float circleRadius = ConvertUnits.ToSimUnits((( playerTexture.Width /2)*scale));   // 301px radius
+
+            body = BodyFactory.CreateCircle(world, circleRadius, 1f);    // Radius 10, desity 1
+            body.BodyType = BodyType.Dynamic;
+            body.Position = ConvertUnits.ToSimUnits(position) + ConvertUnits.ToSimUnits(circleOrigin);
+            body.Restitution = 0.3f;
+            body.Friction = 0.5f;
+            //body.OnCollision += MyOnCollision;
+
+            //CircleShape shape = new CircleShape(0.5f);
+
+            //Fixture fixture = body.CreateFixture(shape);
+
+            
+            
         }
+
+        //public override bool MyOnCollision(Fixture f1, Fixture f2, Contact contact)
+
+        //{
+
+        //    //We want the collision to happen, so we return true.
+
+        //    return true;
+
+        //} 
 
         public void Update()
         {
@@ -64,9 +101,18 @@ namespace Tempov1
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            DrawLimbs(spriteBatch);
-            spriteBatch.Draw(playerTexture, position, null, colour, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
             
+
+            position = body.Position;
+            DrawLimbs(spriteBatch);
+            spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 0f);
+
+            // DEBUGGING CODE. TO DELETE
+            if (isPlayer)
+            {
+                // Console.WriteLine("Physics loc = " + body.Position.X + "," + body.Position.Y);
+            }
         }
 
         private void Generate()
@@ -95,6 +141,15 @@ namespace Tempov1
                 Console.WriteLine("leg offset was " + legOffset + ". Width is " + width);
                 legArray.Add(new Limb((int)legOffset, (int)(150*scale), scale, legTexture));
             }
+
+
+            // circleOrigin = new Vector2((playerTexture.Width /2)*scale, (playerTexture.Height /2)*scale);
+            circleOrigin = new Vector2((playerTexture.Width / 2), (playerTexture.Height / 2));
+
+            Console.WriteLine("Circle Origin returning as " + circleOrigin + ". Scale is " + scale + ". Width is " + playerTexture.Width);
+
+            // DELETE ME
+            
         }
 
         private void DrawLimbs(SpriteBatch spriteBatch)
@@ -103,7 +158,7 @@ namespace Tempov1
             {
                 Vector2 limbPosition = limb.position;
                 Vector2 newPosition = Vector2.Add(limb.position, position);
-                spriteBatch.Draw(limb.texture, newPosition,null, limbColour, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(limb.texture, ConvertUnits.ToDisplayUnits(newPosition),null, limbColour, body.Rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
             }
         }
 
