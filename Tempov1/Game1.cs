@@ -63,7 +63,7 @@ namespace Tempov1
 
             characterList.Add(player);
 
-            for (int x = 0; x < 0; x++)
+            for (int x = 0; x < 5; x++)
             {
                 characterList.Add(new Character());
             }
@@ -161,12 +161,12 @@ namespace Tempov1
              * 
             */
             
-                     var projection = Matrix.CreateOrthographicOffCenter(
-             0f,
-             ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Width),
-             ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Height), 0f, 0f,
-             1f);
-         _debugView.RenderDebugData(ref projection);
+         //            var projection = Matrix.CreateOrthographicOffCenter(
+         //    0f,
+         //    ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Width),
+         //    ConvertUnits.ToSimUnits(graphics.GraphicsDevice.Viewport.Height), 0f, 0f,
+         //    1f);
+         //_debugView.RenderDebugData(ref projection);
 
 
 

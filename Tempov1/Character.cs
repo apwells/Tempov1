@@ -108,7 +108,7 @@ namespace Tempov1
 
             position = body.Position;
             DrawLimbs(spriteBatch);
-            //spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 0f);
 
             // DEBUGGING CODE. TO DELETE
             if (isPlayer)
@@ -152,17 +152,11 @@ namespace Tempov1
         {
             for (int x = 1; x <= legs; x++)
             {
-                float legOffset = scale * ((float)width * ((float)x / ((float)legs + 1f)));
+                float legOffset = scale * ((float)width * ((float)x / ((float)legs + 1f)) - width/2);
 
                 Console.WriteLine("leg offset was " + legOffset + ". Width is " + width);
-                Limb limb = new Limb((int)legOffset, (int)(150 * scale), scale, legTexture, body, world, this);
+                Limb limb = new Limb((int)legOffset, (int)(150 * scale), scale, legTexture, body, world, this, limbColour);
                 legArray.Add(limb);
-
-
-
-                
-                //body.JointList.Next.Joint.
-                
             }
         }
 
@@ -170,9 +164,9 @@ namespace Tempov1
         {
             foreach (Limb limb in legArray)
             {
-                Vector2 limbPosition = limb.position;
-                Vector2 newPosition = Vector2.Add(limb.position, ConvertUnits.ToDisplayUnits(body.Position));
-                spriteBatch.Draw(limb.texture, newPosition,null, limbColour, body.Rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                //Vector2 limbPosition = limb.position;
+                //Vector2 newPosition = Vector2.Add(ConvertUnits.ToDisplayUnits(limb.body.Position), ConvertUnits.ToDisplayUnits(body.Position));
+                limb.Draw(spriteBatch);
             }
         }
 
