@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Joints;
 using FarseerPhysics.Factories;
 using FarseerPhysics.Collision;
 using FarseerPhysics.Common;
@@ -27,7 +28,10 @@ namespace Tempov1
         // Physics
         public Body limbBody;
 
-        public Limb(int x, int y, float scale, Texture2D texture, Body body, World world, Character parent, Color limbColour)
+        /*
+         *  Limbtype ; 1 = leg, 2 = arm
+         */
+        public Limb(int x, int y, float scale, Texture2D texture, Body body, World world, Character parent, Color limbColour, int limbType)
         {
             this.texture = texture;
             xOffset = x;
@@ -39,12 +43,50 @@ namespace Tempov1
 
             position = new Vector2(xOffset, yOffset);
 
-            limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits((texture.Width * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 1);
-            limbBody.BodyType = BodyType.Dynamic;
-            limbBody.Position = ConvertUnits.ToSimUnits(parent.position + position + parent.circleOrigin);
-            limbBody.Restitution = 0.1f;
-            limbBody.Friction = 0.5f;
-            JointFactory.CreateWeldJoint(world, limbBody, body, Vector2.Zero);
+            if (limbType == 1)
+            {
+                limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits((texture.Width * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 3f);
+                limbBody.BodyType = BodyType.Dynamic;
+                limbBody.Position = ConvertUnits.ToSimUnits(parent.position + position + parent.circleOrigin);
+                limbBody.Restitution = 0.1f;
+                limbBody.Friction = 0.5f;
+                JointFactory.CreateWeldJoint(world, limbBody, body, Vector2.Zero);
+            }
+
+            // Arm (left or right)
+            if (limbType == 2 || limbType == 3)
+            {
+                // TO DO - Remove repition in this class
+                if (limbType == 2)
+                {
+                    limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits(((texture.Width - 10) * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 5f);
+                }
+                else
+                {
+                    limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits(((texture.Width + 10) * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 5f);
+                }
+                
+                limbBody.BodyType = BodyType.Dynamic;
+                limbBody.Position = ConvertUnits.ToSimUnits(parent.position + position + parent.circleOrigin);
+                limbBody.Restitution = 0f;
+                limbBody.Friction = 10f;
+
+                RevoluteJoint _revolutejoint;
+                if (limbType == 2)
+                {
+                    _revolutejoint = JointFactory.CreateRevoluteJoint(world, body, limbBody, new Vector2(ConvertUnits.ToSimUnits(texture.Width / 2), ConvertUnits.ToSimUnits((-1) * texture.Height / 2)));
+                }
+                else
+                {
+                    _revolutejoint = JointFactory.CreateRevoluteJoint(world, body, limbBody, new Vector2(ConvertUnits.ToSimUnits((-1)*texture.Width / 2), ConvertUnits.ToSimUnits((-1) * texture.Height / 2)));
+                }
+                
+                _revolutejoint.LimitEnabled = true;
+                _revolutejoint.LowerLimit = (float)Math.PI/-4;
+                _revolutejoint.UpperLimit = (float)Math.PI/4;
+                //JointFactory.CreateWeldJoint(world, limbBody, body, Vector2.Zero);
+                
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)

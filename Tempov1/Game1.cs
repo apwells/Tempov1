@@ -70,7 +70,7 @@ namespace Tempov1
 
             characterList.Add(player);
 
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < 1; x++)
             {
                 characterList.Add(new Character());
             }
@@ -117,9 +117,11 @@ namespace Tempov1
                 System.Threading.Thread.Sleep(50);
             Vector2 playerPosition = new Vector2(rnd.Next(0,1000), rnd.Next(100,100));
             character.Initialize(Content.Load<Texture2D>("Character/head"),
+                Content.Load<Texture2D>("Character/face"),
                 Content.Load<Texture2D>("Character/leftarm"),
                 Content.Load<Texture2D>("Character/rightarm"),
                 Content.Load<Texture2D>("Character/leg"),
+                Content.Load<Texture2D>("Character/shading"),
                 playerPosition,
                 world);
 
@@ -210,11 +212,13 @@ namespace Tempov1
             Random rnd = new Random();
             Character newChar = new Character();
             characterList.Add(newChar);
-            Vector2 playerPosition = new Vector2(rnd.Next(0, 1000), rnd.Next(100, 100));
+            Vector2 playerPosition = new Vector2(rnd.Next(0, 1000), rnd.Next(0, 50));
             newChar.Initialize(Content.Load<Texture2D>("Character/head"),
+                Content.Load<Texture2D>("Character/face"),
                 Content.Load<Texture2D>("Character/leftarm"),
                 Content.Load<Texture2D>("Character/rightarm"),
                 Content.Load<Texture2D>("Character/leg"),
+                Content.Load<Texture2D>("Character/shading"),
                 playerPosition,
                 world);
 

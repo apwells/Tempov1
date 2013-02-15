@@ -17,9 +17,11 @@ namespace Tempov1
     {
         // Animation representing the player
         public Texture2D playerTexture;
+        private Texture2D faceTexture;
         private Texture2D leftArmTexture;
         private Texture2D rightArmTexture;
         private Texture2D legTexture;
+        private Texture2D shadowTexture;
 
         // Position of the Player relative to the upper left side of the screen
         public Vector2 position;
@@ -57,12 +59,14 @@ namespace Tempov1
             get { return playerTexture.Height; }
         }
 
-        public void Initialize(Texture2D headTexture, Texture2D leftArmTexture, Texture2D rightArmTexture, Texture2D legTexture, Vector2 position, World world)
+        public void Initialize(Texture2D headTexture, Texture2D faceTexture, Texture2D leftArmTexture, Texture2D rightArmTexture, Texture2D legTexture, Texture2D shadowTexture, Vector2 position, World world)
         {
             
             playerTexture = headTexture;
+            this.faceTexture = faceTexture;
             this.leftArmTexture = leftArmTexture;
             this.rightArmTexture = rightArmTexture;
+            this.shadowTexture = shadowTexture;
             this.legTexture = legTexture;
             this.position = position;
             this.world = world;
@@ -72,7 +76,7 @@ namespace Tempov1
 
             float circleRadius = ConvertUnits.ToSimUnits((( playerTexture.Width /2)*scale));   // 301px radius
 
-            body = BodyFactory.CreateCircle(world, circleRadius, 1f);    // Radius 10, desity 1
+            body = BodyFactory.CreateCircle(world, circleRadius, 3f);    // Radius 10, desity 1
             body.BodyType = BodyType.Dynamic;
             body.Position = ConvertUnits.ToSimUnits(position) + ConvertUnits.ToSimUnits(circleOrigin);
             body.Restitution = 0.3f;
@@ -109,6 +113,9 @@ namespace Tempov1
             position = body.Position;
             DrawLimbs(spriteBatch);
             spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(faceTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin/5, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(shadowTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, 0f, circleOrigin, scale, SpriteEffects.None, 0f);
+
 
             // DEBUGGING CODE. TO DELETE
             if (isPlayer)
@@ -130,9 +137,9 @@ namespace Tempov1
                                rnd.Next(60, 255), 
                                rnd.Next(60, 255));
 
-            limbColour = new Color(rnd.Next(180, 255),
-                                    rnd.Next(180, 255),
-                                    rnd.Next(180, 255));
+            limbColour = new Color(rnd.Next(100, 255),
+                                    rnd.Next(100, 255),
+                                    rnd.Next(100, 255));
 
 
 
@@ -155,9 +162,13 @@ namespace Tempov1
                 float legOffset = scale * ((float)width * ((float)x / ((float)legs + 1f)) - width/2);
 
                 Console.WriteLine("leg offset was " + legOffset + ". Width is " + width);
-                Limb limb = new Limb((int)legOffset, (int)(150 * scale), scale, legTexture, body, world, this, limbColour);
+                Limb limb = new Limb((int)legOffset, (int)(150 * scale), scale, legTexture, body, world, this, limbColour, 1);
                 legArray.Add(limb);
             }
+
+            
+            legArray.Add(new Limb((int)((-1)*((playerTexture.Width/2)*scale)), (int)(90 * scale), scale, leftArmTexture, body, world, this, limbColour, 2));
+            legArray.Add(new Limb((int)(((playerTexture.Width / 2) * scale)), (int)(90 * scale), scale, rightArmTexture, body, world, this, limbColour, 3));
         }
 
         private void DrawLimbs(SpriteBatch spriteBatch)
