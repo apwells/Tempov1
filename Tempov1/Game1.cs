@@ -34,6 +34,7 @@ namespace Tempov1
         World world;    // Physics
         Gui _gui;
         MouseObj mouseObj;
+        ArrayList plantArray;
 
 
         private FarseerPhysics.DebugViews.DebugViewXNA _debugView;
@@ -68,6 +69,8 @@ namespace Tempov1
             player.isPlayer = true;
             mouseObj = new MouseObj();  // For tracking the mouse
 
+            
+
             characterList.Add(player);
 
             for (int x = 0; x < 1; x++)
@@ -89,6 +92,7 @@ namespace Tempov1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             world = new World(new Vector2(0, 8.2f));   // World with gravity of 1
+            
 
             Content.Load<SpriteFont>("font");
 
@@ -110,7 +114,7 @@ namespace Tempov1
             
 
             floor = new Floor(Content.Load<Texture2D>("floor"), 1280, 147, 0, (GraphicsDevice.Viewport.TitleSafeArea.Height - 148), world);
-
+            GeneratePlants();
 
             foreach (Character character in characterList)
             {
@@ -167,6 +171,7 @@ namespace Tempov1
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            
 
             /**** PHYSICS 
              * 
@@ -183,6 +188,7 @@ namespace Tempov1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            DrawBackground(spriteBatch);
             //player.Draw(spriteBatch);
             floor.Draw(spriteBatch);
 
@@ -224,13 +230,39 @@ namespace Tempov1
 
         }
 
+        /*
+         *  TODO Put this stuff in its own class
+         */
+        private void DrawBackground(SpriteBatch spriteBatch)
+        {
+            Texture2D background = Content.Load<Texture2D>("background");
+            spriteBatch.Draw(background, Vector2.Zero, Color.White);
 
-        //private void CreateGUI()
-        //{
-        //    Game game = this;
-        //    Skin skin = new Skin(Content.Load<Texture2D>("Character/leftarm"), "hello");
-        //    _gui = new Gui(game, skin, );
-        //}
+            foreach (Vector4 plant in plantArray)
+            {
+                String plantTex = "plant" + plant.W;
+                Texture2D texture = Content.Load<Texture2D>(plantTex);
+                spriteBatch.Draw(texture, new Vector2(plant.X, plant.Y), null, Color.White, 0f, new Vector2(texture.Width / 2, texture.Height / 2), plant.Z, SpriteEffects.None, 0f);
+            }
+        }
+
+        private void GeneratePlants()
+        {
+            Random rnd = new Random();
+            int plants = rnd.Next(1, 8);
+
+            plantArray = new ArrayList(5);
+
+            
+
+            for (int x = 0; x < plants; x++)
+            {
+                // Vector3 is X, Y, Scale, plantSprite
+                Vector4 plant = new Vector4(rnd.Next(0, graphics.GraphicsDevice.Viewport.Width), floor.position.Y, (float)Math.Max(rnd.NextDouble(), 0.4), rnd.Next(1, 4));
+                plantArray.Add(plant);
+                Console.WriteLine(plant);
+            }
+        }
 
     }
 }
