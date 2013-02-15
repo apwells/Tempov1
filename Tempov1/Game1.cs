@@ -32,9 +32,11 @@ namespace Tempov1
         SpriteBatch spriteBatch;
         Character player;
         World world;    // Physics
-        Gui _gui;
         MouseObj mouseObj;
         ArrayList plantArray;
+        Vector2 backgroundPos = new Vector2(0, 0);
+
+        float alpha = 3f;
 
 
         private FarseerPhysics.DebugViews.DebugViewXNA _debugView;
@@ -46,6 +48,7 @@ namespace Tempov1
         public Game1()
         {   
             graphics = new GraphicsDeviceManager(this);
+            
             Content.RootDirectory = "Content";
 
             
@@ -68,7 +71,6 @@ namespace Tempov1
             player = new Character();
             player.isPlayer = true;
             mouseObj = new MouseObj();  // For tracking the mouse
-
             
 
             characterList.Add(player);
@@ -188,6 +190,7 @@ namespace Tempov1
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            
             DrawBackground(spriteBatch);
             //player.Draw(spriteBatch);
             floor.Draw(spriteBatch);
@@ -196,7 +199,11 @@ namespace Tempov1
             {
                 character.Draw(spriteBatch);
             }
+            
+            spriteBatch.End();
 
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied);
+            TitleScreen(gameTime, spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -235,8 +242,15 @@ namespace Tempov1
          */
         private void DrawBackground(SpriteBatch spriteBatch)
         {
+
             Texture2D background = Content.Load<Texture2D>("background");
-            spriteBatch.Draw(background, Vector2.Zero, Color.White);
+            backgroundPos = backgroundPos - new Vector2((0.1f), 0f);
+            spriteBatch.Draw(background, backgroundPos, Color.White);
+            spriteBatch.Draw(background, backgroundPos+ new Vector2(background.Width, 0), Color.White);
+            if (backgroundPos == new Vector2(-background.Width, 0))
+            {
+                backgroundPos = Vector2.Zero;
+            }
 
             foreach (Vector4 plant in plantArray)
             {
@@ -244,6 +258,9 @@ namespace Tempov1
                 Texture2D texture = Content.Load<Texture2D>(plantTex);
                 spriteBatch.Draw(texture, new Vector2(plant.X, plant.Y), null, Color.White, 0f, new Vector2(texture.Width / 2, texture.Height / 2), plant.Z, SpriteEffects.None, 0f);
             }
+
+            Texture2D light = Content.Load<Texture2D>("light");
+            spriteBatch.Draw(light, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
 
         private void GeneratePlants()
@@ -260,9 +277,16 @@ namespace Tempov1
                 // Vector3 is X, Y, Scale, plantSprite
                 Vector4 plant = new Vector4(rnd.Next(0, graphics.GraphicsDevice.Viewport.Width), floor.position.Y, (float)Math.Max(rnd.NextDouble(), 0.4), rnd.Next(1, 4));
                 plantArray.Add(plant);
-                Console.WriteLine(plant);
+                
             }
         }
 
+        private void TitleScreen(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            alpha = alpha - (float)(gameTime.ElapsedGameTime.TotalMilliseconds/1000);
+            Console.WriteLine(alpha);
+            Texture2D texture = Content.Load<Texture2D>("title");
+            spriteBatch.Draw(texture, Vector2.Zero, null, new Color(255,255,255, alpha), 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+        }
     }
 }

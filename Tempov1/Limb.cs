@@ -59,11 +59,11 @@ namespace Tempov1
                 // TO DO - Remove repition in this class
                 if (limbType == 2)
                 {
-                    limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits(((texture.Width - 10) * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 5f);
+                    limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits(((texture.Width - 10) * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 3f);
                 }
                 else
                 {
-                    limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits(((texture.Width + 10) * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 5f);
+                    limbBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits(((texture.Width + 10) * scale)), ConvertUnits.ToSimUnits((texture.Height * scale)), 3f);
                 }
                 
                 limbBody.BodyType = BodyType.Dynamic;
@@ -82,6 +82,7 @@ namespace Tempov1
                 }
                 
                 _revolutejoint.LimitEnabled = true;
+                //_revolutejoint.JointType = JointType.FixedRevolute;
                 _revolutejoint.LowerLimit = (float)Math.PI/-4;
                 _revolutejoint.UpperLimit = (float)Math.PI/4;
                 //JointFactory.CreateWeldJoint(world, limbBody, body, Vector2.Zero);

@@ -112,9 +112,9 @@ namespace Tempov1
 
             position = body.Position;
             DrawLimbs(spriteBatch);
-            spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(faceTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin/5, scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(shadowTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, 0f, circleOrigin, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(playerTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin, scale, SpriteEffects.None, 1f);
+            spriteBatch.Draw(faceTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, body.Rotation, circleOrigin/5, scale, SpriteEffects.None, 1f);
+            spriteBatch.Draw(shadowTexture, ConvertUnits.ToDisplayUnits(body.Position), null, colour, 0f, circleOrigin, scale, SpriteEffects.None, 1f);
 
 
             // DEBUGGING CODE. TO DELETE
