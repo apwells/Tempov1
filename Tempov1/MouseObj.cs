@@ -13,17 +13,32 @@ namespace Tempov1
         MouseState currentMouse;
         MouseState lastMouse;
 
+
         public bool HasClicked()
         {
             currentMouse = Mouse.GetState();
+
+            lastMouse = currentMouse;
+            return false;
+        }
+
+        public int whichClick()
+        {
+            currentMouse = Mouse.GetState();
+            if (currentMouse.RightButton == ButtonState.Pressed &&
+                lastMouse.RightButton == ButtonState.Released)
+            {
+                lastMouse = currentMouse;
+                return 2;
+            }
             if (currentMouse.LeftButton == ButtonState.Pressed &&
                 lastMouse.LeftButton == ButtonState.Released)
             {
                 lastMouse = currentMouse;
-                return true;
+                return 1;
             }
             lastMouse = currentMouse;
-            return false;
+            return 0;
         }
     }
 }

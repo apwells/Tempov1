@@ -56,6 +56,9 @@ namespace Tempov1
             // Arm (left or right)
             if (limbType == 2 || limbType == 3)
             {
+
+
+
                 // TO DO - Remove repition in this class
                 if (limbType == 2)
                 {
@@ -68,23 +71,23 @@ namespace Tempov1
                 
                 limbBody.BodyType = BodyType.Dynamic;
                 limbBody.Position = ConvertUnits.ToSimUnits(parent.position + position + parent.circleOrigin);
-                limbBody.Restitution = 0f;
-                limbBody.Friction = 10f;
+                limbBody.Restitution = 1f;
+                limbBody.Friction = 5f;
 
                 RevoluteJoint _revolutejoint;
                 if (limbType == 2)
                 {
-                    _revolutejoint = JointFactory.CreateRevoluteJoint(world, body, limbBody, new Vector2(ConvertUnits.ToSimUnits(texture.Width / 2), ConvertUnits.ToSimUnits((-1) * texture.Height / 2)));
+                    JointFactory.CreateWeldJoint(world, body, limbBody, new Vector2(ConvertUnits.ToSimUnits(texture.Width / 2), ConvertUnits.ToSimUnits((-1) * texture.Height / 2)));
                 }
                 else
                 {
-                    _revolutejoint = JointFactory.CreateRevoluteJoint(world, body, limbBody, new Vector2(ConvertUnits.ToSimUnits((-1)*texture.Width / 2), ConvertUnits.ToSimUnits((-1) * texture.Height / 2)));
+                    JointFactory.CreateWeldJoint(world, body, limbBody, new Vector2(ConvertUnits.ToSimUnits((-1) * texture.Width / 2), ConvertUnits.ToSimUnits((-1) * texture.Height / 2)));
                 }
                 
-                _revolutejoint.LimitEnabled = true;
+                //_revolutejoint.LimitEnabled = true;
                 //_revolutejoint.JointType = JointType.FixedRevolute;
-                _revolutejoint.LowerLimit = (float)Math.PI/-4;
-                _revolutejoint.UpperLimit = (float)Math.PI/4;
+                //_revolutejoint.LowerLimit = (float)Math.PI/-4;
+                //_revolutejoint.UpperLimit = (float)Math.PI/4;
                 //JointFactory.CreateWeldJoint(world, limbBody, body, Vector2.Zero);
                 
             }

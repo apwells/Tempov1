@@ -163,6 +163,8 @@ namespace Tempov1
             // TODO: Add your update logic here
             world.Step((float)gameTime.ElapsedGameTime.TotalMilliseconds * 0.001f);
 
+
+
             base.Update(gameTime);
         }
 
@@ -212,7 +214,16 @@ namespace Tempov1
 
         public void HandleInput()
         {
-            if (mouseObj.HasClicked())
+            int click = mouseObj.whichClick();
+            if (click == 2)
+            {
+                foreach (Character delChar in characterList)
+                {
+                    delChar.DeletePhysics();
+                }
+                characterList.Clear();
+            }
+            if (click == 1)
             {
                 // Create a new dude
                 Console.WriteLine("Mouse pressed");
@@ -244,13 +255,16 @@ namespace Tempov1
         {
 
             Texture2D background = Content.Load<Texture2D>("background");
-            backgroundPos = backgroundPos - new Vector2((0.1f), 0f);
-            spriteBatch.Draw(background, backgroundPos, Color.White);
-            spriteBatch.Draw(background, backgroundPos+ new Vector2(background.Width, 0), Color.White);
-            if (backgroundPos == new Vector2(-background.Width, 0))
+            Texture2D detail = Content.Load<Texture2D>("detail");
+            if (backgroundPos.X <= (-background.Width))
             {
                 backgroundPos = Vector2.Zero;
             }
+            backgroundPos = backgroundPos - new Vector2((0.3f), 0f);
+            spriteBatch.Draw(background, Vector2.Zero, Color.White);
+            spriteBatch.Draw(detail, backgroundPos, Color.White);
+            spriteBatch.Draw(detail, backgroundPos+ new Vector2(background.Width, 0), Color.White);
+
 
             foreach (Vector4 plant in plantArray)
             {

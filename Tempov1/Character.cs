@@ -46,7 +46,7 @@ namespace Tempov1
         public Fixture fixture;
         public World world;
 
-        private ArrayList legArray = new ArrayList();
+        public ArrayList legArray = new ArrayList();
 
         public int width
         {
@@ -76,7 +76,7 @@ namespace Tempov1
 
             float circleRadius = ConvertUnits.ToSimUnits((( playerTexture.Width /2)*scale));   // 301px radius
 
-            body = BodyFactory.CreateCircle(world, circleRadius, 3f);    // Radius 10, desity 1
+            body = BodyFactory.CreateCircle(world, circleRadius, 4f);    // Radius 10, desity 1
             body.BodyType = BodyType.Dynamic;
             body.Position = ConvertUnits.ToSimUnits(position) + ConvertUnits.ToSimUnits(circleOrigin);
             body.Restitution = 0.3f;
@@ -166,9 +166,12 @@ namespace Tempov1
                 legArray.Add(limb);
             }
 
-            
-            legArray.Add(new Limb((int)((-1)*((playerTexture.Width/2)*scale)), (int)(90 * scale), scale, leftArmTexture, body, world, this, limbColour, 2));
-            legArray.Add(new Limb((int)(((playerTexture.Width / 2) * scale)), (int)(90 * scale), scale, rightArmTexture, body, world, this, limbColour, 3));
+            Random rnd = new Random();
+            if (rnd.Next(0, 2) == 1)
+            {
+                legArray.Add(new Limb((int)((-1) * ((playerTexture.Width / 2) * scale)), (int)(90 * scale), scale, leftArmTexture, body, world, this, limbColour, 2));
+                legArray.Add(new Limb((int)(((playerTexture.Width / 2) * scale)), (int)(90 * scale), scale, rightArmTexture, body, world, this, limbColour, 3));
+            }
         }
 
         private void DrawLimbs(SpriteBatch spriteBatch)
@@ -178,6 +181,15 @@ namespace Tempov1
                 //Vector2 limbPosition = limb.position;
                 //Vector2 newPosition = Vector2.Add(ConvertUnits.ToDisplayUnits(limb.body.Position), ConvertUnits.ToDisplayUnits(body.Position));
                 limb.Draw(spriteBatch);
+            }
+        }
+
+        public void DeletePhysics()
+        {
+            world.RemoveBody(body);
+            foreach (Limb limb in legArray)
+            {
+                world.RemoveBody(limb.limbBody);
             }
         }
 
